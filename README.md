@@ -50,21 +50,21 @@ Another approach is to move the _camera_ so as to avoid the background repetitio
 
 Here is a video of my old stop at 125th St in New York turned into an image. (This time, the "slices" are wider than one pixel as this was taken in, I think, 2013 before the iPhone allowed slo-mo.)
 
-**Video input: **
+**Input video:**
 
 https://user-images.githubusercontent.com/20578427/173238427-b783d30c-9ef1-47f5-a569-d2c27184f352.mov
 
-**Image output: **
+**Output video:**
 
 <img alt="125th" src="https://user-images.githubusercontent.com/20578427/173238562-55f4433b-209d-4aee-82ab-272db4e39354.png">
 
 Here is another, smoother image from a slo-mo video. 
 
-**Video input: **
+**Input video:**
 
 https://user-images.githubusercontent.com/20578427/173238814-a722ebbb-831f-48a1-8fd9-63e41ee52768.mp4
 
-**Image output: **
+**Output video:**
 
 ![trainride](https://user-images.githubusercontent.com/20578427/173238901-e32931ff-d438-41ea-bc01-8f884b53518e.png)
 
@@ -77,6 +77,8 @@ For each of the images above, I had to make the decision _which pixel on the x a
 But for an image of a width of _n_ pixels, there are also _n_ possible positions for these "slices." The output will be different as time passes between the first and the last, be it the camera or an object; also, especially for videos with a lot of depth, there is a slight difference in perspective between the first and the last "slice."
 
 For example, this is the output for the video from above of the 125th St stop, taken at difference "slice" positions (the video was 1080 pixel wide):
+
+<img width="300" alt="first row" src="https://user-images.githubusercontent.com/20578427/173253561-42a6edf0-e1ed-47c3-ae7d-6204b6ba638d.png">
 
 Very first row of pixels (_n_=0):
 
