@@ -11,9 +11,11 @@ from tbp_lib import * # this needs to be in the same directory
 start_time = time.process_time()
 
 #### basic variables - change here manually
-project_name = "PROJECT NAME" 
-input_file = "/Users/tbp/text.mov"
-directory = "/Users/tbp/" + project_name
+project_name = "NAME" 
+input_file = "/Users/video.mov"
+directory = "/Users/" + project_name
+if os.path.isdir(directory) == False: 
+	os.mkdir(directory)
 
 start_frame = 1 	# first frame to start from
 slice_width = 1		# width of the "slices"
@@ -64,7 +66,7 @@ for j in range(0,frame_count):	# each pass = one image
 				
 				raw_image = pipe.stdout.read(video_height*video_width*3) 
 				image =  numpy.frombuffer(raw_image, dtype='uint8')
-				#image = image.reshape((BREITEfilm,HOEHEfilm,3)) # toggle between this and the next line if output is crap
+				#image = image.reshape((video_width,video_width,3)) # toggle between this and the next line if output is crap
 				image = image.reshape((video_height,video_width,3)) 
 				im = Image.fromarray(image)
 				#im = im.rotate(-90) # toggle for rotation (to do: automate)
@@ -83,11 +85,11 @@ for j in range(0,frame_count):	# each pass = one image
 	start_frame=start_frame+1
 	
 # MAKE FILM 
-makefilm(directory, directory + "/" + project_name,30)
-tprint("This took" + time.process_time() - start_time + " seconds.")
+makefilm(directory, directory + project_name,30)
+print("This took" + time.process_time() - start_time + " seconds.")
 
 
-# to do: ask to delete temporary images
+# ask to delete temporary images
 '''reply = str(input("++ Delete temporary images? ")) 
 if reply == "j":
 	remove_files(directory)		
