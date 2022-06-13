@@ -3,7 +3,7 @@
 ## Installation:
 
 Simply copy both files tbp_main.py and tbp_lib.py into a folder; open the main file in an editor, add the path info, and change the parameters. 
-I might make a version with flags later, but I like to see the possible options.
+I might make a version with flags later, but I like to see the possible options. You will need to install the dependencies numpy and PIL. 
 
 ## Description:
 
