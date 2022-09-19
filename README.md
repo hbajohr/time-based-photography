@@ -132,6 +132,6 @@ https://user-images.githubusercontent.com/20578427/173242633-a52d55fe-c7ac-43e9-
 https://user-images.githubusercontent.com/20578427/173243806-0a2f4e4c-f637-423f-b8ba-ee97a93aa18b.mp4
 
 
-To me, this looks insane - the combination of both approaches makes them look like they are floating, and the perspectival stretching/compressing makes the jogger smaller than the lamppost he is jogging in front. 
+To me, this looks insane - the combination of both approaches makes them look like they are floating, and the perspectival stretching/compressing makes the jogger smaller than the lamppost he is jogging in front of. 
 
 
