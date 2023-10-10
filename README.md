@@ -80,21 +80,21 @@ For example, this is the output for the video from above of the 125th St stop, t
 
 <img width="300" alt="first row" src="https://user-images.githubusercontent.com/20578427/173253561-42a6edf0-e1ed-47c3-ae7d-6204b6ba638d.png">
 
-Very first row of pixels (_n_=0):
+Very first column of pixels (_n_=0):
 
 <img width="1684" alt="first row" src="https://user-images.githubusercontent.com/20578427/173239476-0ce854c1-2847-42b6-a7b8-852d7b4b95a1.png">
 
-Center row of pixels (_n_=540): 
+Center column of pixels (_n_=540): 
 
 <img width="1686" alt="middle row" src="https://user-images.githubusercontent.com/20578427/173239469-1a7cacdc-f08a-4305-a4bd-79b2cbcdc5a4.png">
 
-Last row of pixels (_n_=1080):
+Last column of pixels (_n_=1080):
 
 <img width="1685" alt="last row" src="https://user-images.githubusercontent.com/20578427/173239462-8a1be82b-ac22-43ef-a75e-35233464b3d1.png">
 
 This makes intuitive sense of you remember that this is taken from a moving train: The corner of the building in the middle would move in and out of frame, first only as an edge blocking the view into the street, then lining up with the perspective of the street, and finally showing the facades of the street. Since the last row of pixels captures the first phase and the first row (as the camera is moving from left to right) the last phase of that movement (time having passed), the perspectives are different. 
 
-Now, since this can be done for all _n_ rows of pixels of a video, one can turn the total of all these slightly different images _into a video again_. The result is something like a derivative of the video's time function. 
+Now, since this can be done for all _n_ columns of pixels of a video, one can turn the total of all these slightly different images _into a video again_. The result is something like a derivative of the video's time function. 
 
 Here it is for the 125th St stop (still a bit blocky): 
 
