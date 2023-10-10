@@ -92,7 +92,7 @@ Last column of pixels (_n_=1080):
 
 <img width="1685" alt="last row" src="https://user-images.githubusercontent.com/20578427/173239462-8a1be82b-ac22-43ef-a75e-35233464b3d1.png">
 
-This makes intuitive sense of you remember that this is taken from a moving train: The corner of the building in the middle would move in and out of frame, first only as an edge blocking the view into the street, then lining up with the perspective of the street, and finally showing the facades of the street. Since the last row of pixels captures the first phase and the first row (as the camera is moving from left to right) the last phase of that movement (time having passed), the perspectives are different. 
+This makes intuitive sense of you remember that this is taken from a moving train: The corner of the building in the middle would move in and out of frame, first only as an edge blocking the view into the street, then lining up with the perspective of the street, and finally showing the facades of the street. Since the last column of pixels captures the first phase and the first column (as the camera is moving from left to right) the last phase of that movement (time having passed), the perspectives are different. 
 
 Now, since this can be done for all _n_ columns of pixels of a video, one can turn the total of all these slightly different images _into a video again_. The result is something like a derivative of the video's time function. 
 
