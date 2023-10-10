@@ -78,7 +78,7 @@ But for an image of a width of _n_ pixels, there are also _n_ possible positions
 
 For example, this is the output for the video from above of the 125th St stop, taken at difference "slice" positions (the video was 1080 pixel wide):
 
-<img width="300" alt="first row" src="https://user-images.githubusercontent.com/20578427/173253561-42a6edf0-e1ed-47c3-ae7d-6204b6ba638d.png">
+![cols](https://github.com/hbajohr/time-based-photography/assets/20578427/58f72e2e-243d-4dc5-82e4-b9dc1f29cdf9)
 
 Very first column of pixels (_n_=0):
 
