@@ -78,19 +78,19 @@ But for an image of a width of _n_ pixels, there are also _n_ possible positions
 
 For example, this is the output for the video from above of the 125th St stop, taken at difference "slice" positions (the video was 1080 pixel wide):
 
-![cols](https://github.com/hbajohr/time-based-photography/assets/20578427/58f72e2e-243d-4dc5-82e4-b9dc1f29cdf9)
+<img width="1684" alt="first column" src="https://github.com/hbajohr/time-based-photography/assets/20578427/58f72e2e-243d-4dc5-82e4-b9dc1f29cdf9">
 
 Very first column of pixels (_n_=0):
 
-<img width="1684" alt="first row" src="https://user-images.githubusercontent.com/20578427/173239476-0ce854c1-2847-42b6-a7b8-852d7b4b95a1.png">
+<img width="1684" alt="first column" src="https://user-images.githubusercontent.com/20578427/173239476-0ce854c1-2847-42b6-a7b8-852d7b4b95a1.png">
 
 Center column of pixels (_n_=540): 
 
-<img width="1686" alt="middle row" src="https://user-images.githubusercontent.com/20578427/173239469-1a7cacdc-f08a-4305-a4bd-79b2cbcdc5a4.png">
+<img width="1686" alt="middle column" src="https://user-images.githubusercontent.com/20578427/173239469-1a7cacdc-f08a-4305-a4bd-79b2cbcdc5a4.png">
 
 Last column of pixels (_n_=1080):
 
-<img width="1685" alt="last row" src="https://user-images.githubusercontent.com/20578427/173239462-8a1be82b-ac22-43ef-a75e-35233464b3d1.png">
+<img width="1685" alt="last column" src="https://user-images.githubusercontent.com/20578427/173239462-8a1be82b-ac22-43ef-a75e-35233464b3d1.png">
 
 This makes intuitive sense of you remember that this is taken from a moving train: The corner of the building in the middle would move in and out of frame, first only as an edge blocking the view into the street, then lining up with the perspective of the street, and finally showing the facades of the street. Since the last column of pixels captures the first phase and the first column (as the camera is moving from left to right) the last phase of that movement (time having passed), the perspectives are different. 
 
