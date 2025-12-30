@@ -1,50 +1,5 @@
 # Time-based photography 
 
-This is a script for what I describe as time-based photography. It converts a movie into a series of images, mapping time onto space. See below for a more in-depth description.
-
-### Note on optimized version
-
-I ran my original script through Claude. It did a bang-up job optimizing it. It also added harward acceleration support.
-
-## Installation and Running:
-
-Copy the script to your project folder and install the required dependencies. For basic functionality, you need NumPy, Pillow, tqdm, and PyAV. For better performance on Apple Silicon, optionally install MLX (GPU acceleration) and RIFE (high-quality frame interpolation). You'll also need FFmpeg installed via Homebrew for certain interpolation features. Once installed, run the script from the command line with your input video and output directory as arguments; use `--help` to see all available options.
-`bash # Required dependencies`
-`pip install numpy pillow tqdm av`
-
-### Optional (recommended for Apple Silicon)
-`pip install mlx                    # GPU acceleration`
-
-`pip install rife-ncnn-vulkan       # High-quality frame interpolation`
-
-### FFmpeg (needed for some interpolation features)
-`brew install ffmpeg`
-
-### All Flags
-| Flag | Description |
-|------|-------------|
-| **Slice Parameters** | |
-| `--slice-width N` | Width of each vertical slice in pixels (default: 1) |
-| `--frame-step N` | Process every Nth frame (default: 1) |
-| `--start-x N` | Starting x-position (default: 0) |
-| `--end-x N` | Ending x-position (default: frame width) |
-| `--step-x N` | Step between x-positions (default: 1) |
-| **Transform Options** | |
-| `--swap-dimensions` | Swap width/height (fixes scrambled output) |
-| `--rotate {0,90,180,270}` | Rotate frames clockwise |
-| **Frame Interpolation** | |
-| `--interpolate {1,2,4,8}` | Frame multiplier (default: 1 = none) |
-| `--interpolate-method {auto,ffmpeg,rife,opencv}` | Interpolation backend |
-| **Output Options** | |
-| `--make-video` | Create video from panoramas |
-| `--video-fps N` | Output video frame rate (default: 30) |
-| `--cleanup` | Delete images after creating video |
-| **Performance Options** | |
-| `--threads N` | Thread count for CPU mode (default: 4) |
-| `--no-gpu` | Disable MLX GPU (enables multi-threading) |
-| `--no-hardware-decode` | Disable VideoToolbox hardware decoding |
-| `--benchmark` | Test decoding backends and exit |
-
 # Description:
 
 This is a project I have been working on and off for more than a decade (the earliest version I have on my drive is from 2008 and was started in Processing, but I let it rest for quite a while). The basic idea is to conceive of a photograph as a _function over the time of a video file_. While a photograph is a projection of a point in time onto a static image, time based photography, as I understand it, compresses a temporal sequence into such a static image. 
@@ -169,6 +124,49 @@ https://user-images.githubusercontent.com/20578427/173242633-a52d55fe-c7ac-43e9-
 **Output video: **
 
 https://user-images.githubusercontent.com/20578427/173243806-0a2f4e4c-f637-423f-b8ba-ee97a93aa18b.mp4
+
+## Installation and Running:
+
+Copy the script to your project folder and install the required dependencies. For basic functionality, you need NumPy, Pillow, tqdm, and PyAV. For better performance on Apple Silicon, optionally install MLX (GPU acceleration) and RIFE (high-quality frame interpolation). You'll also need FFmpeg installed via Homebrew for certain interpolation features. Once installed, run the script from the command line with your input video and output directory as arguments; use `--help` to see all available options.
+`bash # Required dependencies`
+`pip install numpy pillow tqdm av`
+
+### Note on optimized version
+
+I ran my original script through Claude. It did a bang-up job optimizing it. It also added harward acceleration support.
+
+### Optional (recommended for Apple Silicon)
+`pip install mlx                    # GPU acceleration`
+
+`pip install rife-ncnn-vulkan       # High-quality frame interpolation`
+
+### FFmpeg (needed for some interpolation features)
+`brew install ffmpeg`
+
+### All Flags
+| Flag | Description |
+|------|-------------|
+| **Slice Parameters** | |
+| `--slice-width N` | Width of each vertical slice in pixels (default: 1) |
+| `--frame-step N` | Process every Nth frame (default: 1) |
+| `--start-x N` | Starting x-position (default: 0) |
+| `--end-x N` | Ending x-position (default: frame width) |
+| `--step-x N` | Step between x-positions (default: 1) |
+| **Transform Options** | |
+| `--swap-dimensions` | Swap width/height (fixes scrambled output) |
+| `--rotate {0,90,180,270}` | Rotate frames clockwise |
+| **Frame Interpolation** | |
+| `--interpolate {1,2,4,8}` | Frame multiplier (default: 1 = none) |
+| `--interpolate-method {auto,ffmpeg,rife,opencv}` | Interpolation backend |
+| **Output Options** | |
+| `--make-video` | Create video from panoramas |
+| `--video-fps N` | Output video frame rate (default: 30) |
+| `--cleanup` | Delete images after creating video |
+| **Performance Options** | |
+| `--threads N` | Thread count for CPU mode (default: 4) |
+| `--no-gpu` | Disable MLX GPU (enables multi-threading) |
+| `--no-hardware-decode` | Disable VideoToolbox hardware decoding |
+| `--benchmark` | Test decoding backends and exit |
 
 
 To me, this looks insane - the combination of both approaches makes them look like they are floating, and the perspectival stretching/compressing makes the jogger smaller than the lamppost he is jogging in front of. 
