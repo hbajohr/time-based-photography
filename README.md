@@ -6,15 +6,15 @@ Copy the script to your project folder and install the required dependencies. Fo
 `bash # Required dependencies`
 `pip install numpy pillow tqdm av`
 
-# Optional (recommended for Apple Silicon)
+### Optional (recommended for Apple Silicon)
 `pip install mlx                    # GPU acceleration`
 
 `pip install rife-ncnn-vulkan       # High-quality frame interpolation`
 
-# FFmpeg (needed for some interpolation features)
+### FFmpeg (needed for some interpolation features)
 `brew install ffmpeg`
 
-# All Flags
+### All Flags
 | Flag | Description |
 |------|-------------|
 | **Slice Parameters** | |
