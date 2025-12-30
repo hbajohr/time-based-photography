@@ -125,25 +125,62 @@ https://user-images.githubusercontent.com/20578427/173242633-a52d55fe-c7ac-43e9-
 
 https://user-images.githubusercontent.com/20578427/173243806-0a2f4e4c-f637-423f-b8ba-ee97a93aa18b.mp4
 
-## Installation and Running:
+To me, this looks insane - the combination of both approaches makes them look like they are floating, and the perspectival stretching/compressing makes the jogger smaller than the lamppost he is jogging in front of. 
 
-Copy the script to your project folder and install the required dependencies. For basic functionality, you need NumPy, Pillow, tqdm, and PyAV. For better performance on Apple Silicon, optionally install MLX (GPU acceleration) and RIFE (high-quality frame interpolation). You'll also need FFmpeg installed via Homebrew for certain interpolation features. Once installed, run the script from the command line with your input video and output directory as arguments; use `--help` to see all available options.
-`bash # Required dependencies`
-`pip install numpy pillow tqdm av`
+# Installation and Running
 
-### Note on optimized version
+Copy the script to your project folder and install the required dependencies. For basic functionality, you need NumPy, Pillow, tqdm, and PyAV. For better performance on Apple Silicon, optionally install MLX (GPU acceleration). You'll also need FFmpeg installed via Homebrew for interpolation features. Once installed, run the script from the command line with your input video and output directory as arguments; use `--help` to see all available options.
 
-I ran my original script through Claude. It did a bang-up job optimizing it. It also added harward acceleration support.
+```bash
+# Required dependencies
+pip install numpy pillow tqdm av
+```
 
-### Optional (recommended for Apple Silicon)
-`pip install mlx                    # GPU acceleration`
+### Note on Optimized Version
 
-`pip install rife-ncnn-vulkan       # High-quality frame interpolation`
+I ran my original script through Claude. It did a bang-up job optimizing it. It also added hardware acceleration support for Apple Silicon (M1/M2/M3/M4), including:
+- VideoToolbox hardware video decoding/encoding
+- MLX GPU acceleration for array operations
+- Frame interpolation with quality presets
+- Progress bars for all long-running operations
 
-### FFmpeg (needed for some interpolation features)
-`brew install ffmpeg`
+### Optional (Recommended for Apple Silicon)
 
-### All Flags
+```bash
+pip install mlx                              # GPU acceleration
+pip install rife-ncnn-vulkan-python-tntwise  # High-quality frame interpolation (experimental)
+```
+
+### FFmpeg (Needed for Interpolation Features)
+
+```bash
+brew install ffmpeg
+```
+
+## Basic Usage
+
+```bash
+# Generate panoramas
+python tbp_optimized.py video.mp4 output/
+
+# With dimension swap (if output looks scrambled)
+python tbp_optimized.py video.mp4 output/ --swap-dimensions
+
+# Create output video from panoramas
+python tbp_optimized.py video.mp4 output/ --make-video
+
+# Frame interpolation for low-fps videos (wider output)
+python tbp_optimized.py video.mp4 output/ --interpolate 2
+
+# Fast interpolation (preview quality)
+python tbp_optimized.py video.mp4 output/ --interpolate 2 --interpolate-quality fast
+
+# Full pipeline: interpolate, create video, clean up images
+python tbp_optimized.py video.mp4 output/ --interpolate 2 --make-video --cleanup
+```
+
+## All Flags
+
 | Flag | Description |
 |------|-------------|
 | **Slice Parameters** | |
@@ -158,6 +195,7 @@ I ran my original script through Claude. It did a bang-up job optimizing it. It 
 | **Frame Interpolation** | |
 | `--interpolate {1,2,4,8}` | Frame multiplier (default: 1 = none) |
 | `--interpolate-method {auto,ffmpeg,rife,opencv}` | Interpolation backend |
+| `--interpolate-quality {fast,medium,best}` | Interpolation quality (default: medium) |
 | **Output Options** | |
 | `--make-video` | Create video from panoramas |
 | `--video-fps N` | Output video frame rate (default: 30) |
@@ -168,7 +206,29 @@ I ran my original script through Claude. It did a bang-up job optimizing it. It 
 | `--no-hardware-decode` | Disable VideoToolbox hardware decoding |
 | `--benchmark` | Test decoding backends and exit |
 
+## Interpolation Quality Presets
 
-To me, this looks insane - the combination of both approaches makes them look like they are floating, and the perspectival stretching/compressing makes the jogger smaller than the lamppost he is jogging in front of. 
+When using `--interpolate`, you can control the speed/quality tradeoff:
+
+| Quality | Mode | Speed | Use Case |
+|---------|------|-------|----------|
+| `fast` | Blend | ~5x faster | Previews, testing |
+| `medium` | MCI/OBMC | ~2x faster | Good balance (default) |
+| `best` | MCI/AOBMC | Baseline | Final output |
+
+```bash
+# Fast (for testing)
+python tbp_optimized.py video.mp4 output/ --interpolate 4 --interpolate-quality fast
+
+# Best (for final output)
+python tbp_optimized.py video.mp4 output/ --interpolate 4 --interpolate-quality best
+```
+
+## Performance Tips
+
+- **GPU mode** (default): Fast per-panorama, but single-threaded due to MLX/Metal limitations
+- **CPU mode** (`--no-gpu --threads 8`): Parallel processing, often faster for many panoramas
+- **Hardware acceleration**: VideoToolbox is automatically used for video decode/encode on Apple Silicon
+- **Interpolation**: Use `--interpolate-quality fast` for ~5x faster frame interpolation
 
 
