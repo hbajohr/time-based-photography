@@ -39,7 +39,7 @@ Copy the script to your project folder and install the required dependencies. Fo
 | `--no-hardware-decode` | Disable VideoToolbox hardware decoding |
 | `--benchmark` | Test decoding backends and exit |
 
-## Description:
+# Description:
 
 This is a project I have been working on and off for more than a decade (the earliest version I have on my drive is from 2008 and was started in Processing, but I let it rest for quite a while). The basic idea is to conceive of a photograph as a _function over the time of a video file_. While a photograph is a projection of a point in time onto a static image, time based photography, as I understand it, compresses a temporal sequence into such a static image. 
 
