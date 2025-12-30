@@ -8,6 +8,7 @@ Copy the script to your project folder and install the required dependencies. Fo
 
 # Optional (recommended for Apple Silicon)
 `pip install mlx                    # GPU acceleration`
+
 `pip install rife-ncnn-vulkan       # High-quality frame interpolation`
 
 # FFmpeg (needed for some interpolation features)
