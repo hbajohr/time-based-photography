@@ -143,6 +143,7 @@ I ran my original script through Claude. It did a bang-up job optimizing it. It 
 - MLX GPU acceleration for array operations
 - Frame interpolation with quality presets
 - Progress bars for all long-running operations
+- **Auto-orientation detection** for iPhone videos
 
 ### Optional (Recommended for Apple Silicon)
 
@@ -160,10 +161,13 @@ brew install ffmpeg
 ## Basic Usage
 
 ```bash
-# Generate panoramas
+# Generate panoramas (with auto-orientation for iPhone videos)
+python tbp_optimized.py video.mp4 output/ --auto-orient
+
+# Without auto-orientation
 python tbp_optimized.py video.mp4 output/
 
-# With dimension swap (if output looks scrambled)
+# Manual dimension swap (if output looks scrambled)
 python tbp_optimized.py video.mp4 output/ --swap-dimensions
 
 # Create output video from panoramas
@@ -175,8 +179,8 @@ python tbp_optimized.py video.mp4 output/ --interpolate 2
 # Fast interpolation (preview quality)
 python tbp_optimized.py video.mp4 output/ --interpolate 2 --interpolate-quality fast
 
-# Full pipeline: interpolate, create video, clean up images
-python tbp_optimized.py video.mp4 output/ --interpolate 2 --make-video --cleanup
+# Full pipeline: auto-orient, interpolate, create video, clean up images
+python tbp_optimized.py video.mp4 output/ --auto-orient --interpolate 2 --make-video --cleanup
 ```
 
 ## All Flags
@@ -192,6 +196,7 @@ python tbp_optimized.py video.mp4 output/ --interpolate 2 --make-video --cleanup
 | **Transform Options** | |
 | `--swap-dimensions` | Swap width/height (fixes scrambled output) |
 | `--rotate {0,90,180,270}` | Rotate frames clockwise |
+| `--auto-orient` | Auto-detect orientation and rotate landscape to portrait |
 | **Frame Interpolation** | |
 | `--interpolate {1,2,4,8}` | Frame multiplier (default: 1 = none) |
 | `--interpolate-method {auto,ffmpeg,rife,opencv}` | Interpolation backend |
@@ -205,6 +210,22 @@ python tbp_optimized.py video.mp4 output/ --interpolate 2 --make-video --cleanup
 | `--no-gpu` | Disable MLX GPU (enables multi-threading) |
 | `--no-hardware-decode` | Disable VideoToolbox hardware decoding |
 | `--benchmark` | Test decoding backends and exit |
+
+## Auto-Orientation
+
+The `--auto-orient` flag automatically detects video orientation using FFprobe metadata and rotates landscape videos to portrait. This is especially useful for iPhone videos, which often store rotation metadata that needs to be interpreted correctly.
+
+```bash
+# Let the script figure out orientation
+python tbp_optimized.py iPhone_video.MOV output/ --auto-orient
+```
+
+The detection reads:
+- Raw pixel dimensions
+- Rotation metadata embedded by the camera
+- Display matrix information
+
+If the video is landscape (width > height after applying metadata), it will automatically rotate 90° to portrait orientation.
 
 ## Interpolation Quality Presets
 
@@ -231,4 +252,6 @@ python tbp_optimized.py video.mp4 output/ --interpolate 4 --interpolate-quality 
 - **Hardware acceleration**: VideoToolbox is automatically used for video decode/encode on Apple Silicon
 - **Interpolation**: Use `--interpolate-quality fast` for ~5x faster frame interpolation
 
+## License
 
+MIT License
