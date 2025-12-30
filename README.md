@@ -1,6 +1,8 @@
 # Time-based photography 
 
-# Note on optimized version
+This is a script for what I describe as time-based photography. It converts a movie into a series of images, mapping time onto space. See below for a more in-depth description.
+
+### Note on optimized version
 
 I ran my original script through Claude. It did a bang-up job optimizing it. It also added harward acceleration support.
 
