@@ -600,6 +600,177 @@ class FrameInterpolator:
 
 
 # =============================================================================
+# ORIENTATION DETECTION
+# =============================================================================
+
+def detect_video_orientation(input_file: str) -> dict:
+    """
+    Detect video orientation using FFprobe metadata.
+    
+    This function reads the video's metadata to determine:
+    1. The actual pixel dimensions (width x height)
+    2. Any rotation metadata embedded by the camera (common on iPhones)
+    3. Whether the video is landscape or portrait after rotation is applied
+    
+    iPhone videos often record in a fixed orientation (usually landscape sensor)
+    and embed rotation metadata to indicate how the video should be displayed.
+    
+    Args:
+        input_file: Path to the video file
+        
+    Returns:
+        Dictionary with:
+            - width: Pixel width of video
+            - height: Pixel height of video
+            - rotation: Rotation metadata in degrees (0, 90, 180, 270)
+            - is_portrait: True if video should display as portrait
+            - display_width: Width after rotation applied
+            - display_height: Height after rotation applied
+            - suggested_rotation: Rotation to apply to make portrait (0 if already portrait)
+            - needs_swap: Whether dimensions need swapping
+    """
+    import json
+    
+    result = {
+        'width': 0,
+        'height': 0,
+        'rotation': 0,
+        'is_portrait': False,
+        'display_width': 0,
+        'display_height': 0,
+        'suggested_rotation': 0,
+        'needs_swap': False
+    }
+    
+    # Check if FFprobe is available
+    try:
+        subprocess.run(['ffprobe', '-version'], capture_output=True, check=True)
+    except (subprocess.CalledProcessError, FileNotFoundError):
+        print("WARNING: FFprobe not found, cannot detect orientation")
+        return result
+    
+    # Get video stream info including rotation metadata
+    # Using JSON output for easier parsing
+    probe_cmd = [
+        'ffprobe',
+        '-v', 'error',
+        '-select_streams', 'v:0',
+        '-show_entries', 'stream=width,height,display_aspect_ratio:stream_tags=rotate:side_data',
+        '-show_entries', 'format_tags=',
+        '-of', 'json',
+        input_file
+    ]
+    
+    try:
+        proc = subprocess.run(probe_cmd, capture_output=True, text=True)
+        data = json.loads(proc.stdout)
+    except (json.JSONDecodeError, subprocess.SubprocessError) as e:
+        print(f"WARNING: Could not parse video metadata: {e}")
+        return result
+    
+    # Extract dimensions
+    if 'streams' in data and len(data['streams']) > 0:
+        stream = data['streams'][0]
+        result['width'] = stream.get('width', 0)
+        result['height'] = stream.get('height', 0)
+        
+        # Check for rotation in tags (common format)
+        tags = stream.get('tags', {})
+        if 'rotate' in tags:
+            try:
+                result['rotation'] = int(tags['rotate'])
+            except ValueError:
+                pass
+        
+        # Also check side_data for displaymatrix (another way rotation is stored)
+        side_data = stream.get('side_data_list', [])
+        for sd in side_data:
+            if sd.get('side_data_type') == 'Display Matrix':
+                # Display matrix can encode rotation
+                rotation = sd.get('rotation', 0)
+                if rotation:
+                    try:
+                        # FFprobe reports negative rotation, we want positive
+                        result['rotation'] = (-int(rotation)) % 360
+                    except (ValueError, TypeError):
+                        pass
+    
+    # If we didn't get dimensions from JSON, try simpler approach
+    if result['width'] == 0 or result['height'] == 0:
+        simple_cmd = [
+            'ffprobe', '-v', 'error',
+            '-select_streams', 'v:0',
+            '-show_entries', 'stream=width,height',
+            '-of', 'csv=p=0',
+            input_file
+        ]
+        try:
+            proc = subprocess.run(simple_cmd, capture_output=True, text=True)
+            parts = proc.stdout.strip().split(',')
+            if len(parts) >= 2:
+                result['width'] = int(parts[0])
+                result['height'] = int(parts[1])
+        except (ValueError, subprocess.SubprocessError):
+            pass
+    
+    # Also try to get rotation from a separate probe if not found
+    if result['rotation'] == 0:
+        rot_cmd = [
+            'ffprobe', '-v', 'error',
+            '-select_streams', 'v:0',
+            '-show_entries', 'stream_side_data=rotation',
+            '-of', 'default=noprint_wrappers=1:nokey=1',
+            input_file
+        ]
+        try:
+            proc = subprocess.run(rot_cmd, capture_output=True, text=True)
+            rot_str = proc.stdout.strip()
+            if rot_str:
+                result['rotation'] = (-int(float(rot_str))) % 360
+        except (ValueError, subprocess.SubprocessError):
+            pass
+    
+    # Calculate display dimensions (after rotation is applied)
+    w, h = result['width'], result['height']
+    rot = result['rotation']
+    
+    # 90° and 270° rotations swap width and height
+    if rot in (90, 270):
+        result['display_width'] = h
+        result['display_height'] = w
+    else:
+        result['display_width'] = w
+        result['display_height'] = h
+    
+    # Determine if portrait (height > width after rotation)
+    result['is_portrait'] = result['display_height'] > result['display_width']
+    
+    # Calculate what rotation would be needed to make it portrait
+    # (for time-based photography which works best with portrait)
+    if not result['is_portrait'] and result['display_width'] > 0:
+        # Video is landscape after applying metadata rotation
+        # We need to rotate it 90° to make it portrait
+        result['suggested_rotation'] = 90
+        result['needs_swap'] = False  # Rotation handles it
+    else:
+        result['suggested_rotation'] = 0
+        result['needs_swap'] = False
+    
+    return result
+
+
+def print_orientation_info(info: dict, input_file: str):
+    """Print human-readable orientation information."""
+    print(f"Orientation detection for: {input_file}")
+    print(f"         Raw dimensions: {info['width']}x{info['height']}")
+    print(f"         Metadata rotation: {info['rotation']}°")
+    print(f"         Display dimensions: {info['display_width']}x{info['display_height']}")
+    print(f"         Orientation: {'Portrait' if info['is_portrait'] else 'Landscape'}")
+    if info['suggested_rotation']:
+        print(f"         Auto-rotation: {info['suggested_rotation']}° (to make portrait)")
+
+
+# =============================================================================
 # VIDEO READER
 # =============================================================================
 
@@ -810,7 +981,7 @@ class AppleSiliconProcessor:
                  frame_step: int = 1, swap_dimensions: bool = False, 
                  rotate: int = 0, use_gpu: bool = True, use_hardware_decode: bool = True,
                  interpolate: int = 1, interpolate_method: str = 'auto',
-                 interpolate_quality: str = 'medium'):
+                 interpolate_quality: str = 'medium', auto_orient: bool = False):
         """
         Initialize the processor.
         
@@ -826,6 +997,7 @@ class AppleSiliconProcessor:
             interpolate: Frame interpolation multiplier (1=none, 2=double, 4=quad, 8=oct)
             interpolate_method: Interpolation method ('auto', 'ffmpeg', 'rife', 'opencv')
             interpolate_quality: Interpolation quality ('fast', 'medium', 'best')
+            auto_orient: Automatically detect and fix orientation for portrait output
         """
         # Store configuration
         self.input_file = input_file
@@ -838,6 +1010,25 @@ class AppleSiliconProcessor:
         self.use_hardware_decode = use_hardware_decode
         self.interpolate = interpolate
         self.interpolate_quality = interpolate_quality
+        
+        # Auto-orientation detection
+        if auto_orient:
+            print("\nDetecting video orientation...")
+            orientation = detect_video_orientation(input_file)
+            print_orientation_info(orientation, input_file)
+            
+            # Apply suggested rotation if video is landscape
+            if orientation['suggested_rotation'] and not rotate:
+                print(f"         → Auto-rotating {orientation['suggested_rotation']}° to portrait")
+                self.rotate = orientation['suggested_rotation']
+            
+            # If video has metadata rotation that wasn't detected properly,
+            # we might need to swap dimensions
+            if orientation['needs_swap'] and not swap_dimensions:
+                print(f"         → Auto-swapping dimensions")
+                self.swap_dimensions = True
+            
+            print()
         
         # Resolve 'auto' interpolation method - default to FFmpeg (most reliable)
         if interpolate_method == 'auto':
@@ -1382,10 +1573,13 @@ EXAMPLES:
   Basic usage (GPU mode, single-threaded):
     python tbp_optimized.py video.mp4 output/
 
+  Auto-detect orientation (recommended for iPhone videos):
+    python tbp_optimized.py video.mp4 output/ --auto-orient
+
   Multi-threaded CPU mode (often faster for many panoramas):
     python tbp_optimized.py video.mp4 output/ --no-gpu --threads 8
 
-  Fix scrambled output (dimension issues):
+  Fix scrambled output (manual methods):
     python tbp_optimized.py video.mp4 output/ --swap-dimensions
     python tbp_optimized.py video.mp4 output/ --rotate 90
 
@@ -1395,6 +1589,9 @@ EXAMPLES:
 
   Create video and clean up images:
     python tbp_optimized.py video.mp4 output/ --make-video --cleanup
+
+  Full pipeline with auto-orientation:
+    python tbp_optimized.py video.mp4 output/ --auto-orient --interpolate 2 --make-video --cleanup
 
   Benchmark to find fastest backend:
     python tbp_optimized.py video.mp4 output/ --benchmark
@@ -1495,6 +1692,11 @@ For more information, see the docstring at the top of this script.
         choices=[0, 90, 180, 270],
         metavar="DEG",
         help="Rotate frames clockwise by degrees: 0, 90, 180, or 270 (default: 0)"
+    )
+    transform_group.add_argument(
+        "--auto-orient",
+        action="store_true",
+        help="Auto-detect orientation and rotate landscape videos to portrait"
     )
     
     # =======================
@@ -1621,7 +1823,8 @@ For more information, see the docstring at the top of this script.
         use_hardware_decode=not args.no_hardware_decode,
         interpolate=args.interpolate,
         interpolate_method=args.interpolate_method,
-        interpolate_quality=args.interpolate_quality
+        interpolate_quality=args.interpolate_quality,
+        auto_orient=args.auto_orient
     )
     
     # Generate panoramas
