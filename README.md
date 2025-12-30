@@ -2,13 +2,13 @@
 
 ## Installation and Running:
 
-Copy the script to your project folder and install the required dependencies. For basic functionality, you need NumPy, Pillow, tqdm, and PyAV. For better performance on Apple Silicon, optionally install MLX (GPU acceleration) and RIFE (high-quality frame interpolation). You'll also need FFmpeg installed via Homebrew for certain interpolation features. Once installed, run the script from the command line with your input video and output directory as arguments; use --help to see all available options.
-bash# Required dependencies
-pip install numpy pillow tqdm av
+Copy the script to your project folder and install the required dependencies. For basic functionality, you need NumPy, Pillow, tqdm, and PyAV. For better performance on Apple Silicon, optionally install MLX (GPU acceleration) and RIFE (high-quality frame interpolation). You'll also need FFmpeg installed via Homebrew for certain interpolation features. Once installed, run the script from the command line with your input video and output directory as arguments; use `--help` to see all available options.
+`bash # Required dependencies
+`pip install numpy pillow tqdm av
 
 # Optional (recommended for Apple Silicon)
-pip install mlx                    # GPU acceleration
-pip install rife-ncnn-vulkan       # High-quality frame interpolation
+`pip install mlx                    # GPU acceleration
+`pip install rife-ncnn-vulkan       # High-quality frame interpolation
 
 # FFmpeg (needed for some interpolation features)
 brew install ffmpeg
