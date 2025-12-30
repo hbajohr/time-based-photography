@@ -1,5 +1,9 @@
 # Time-based photography 
 
+# Note on optimized version
+
+I ran my original script through Claude. It did a bang-up job optimizing it. It also added harward acceleration support.
+
 ## Installation and Running:
 
 Copy the script to your project folder and install the required dependencies. For basic functionality, you need NumPy, Pillow, tqdm, and PyAV. For better performance on Apple Silicon, optionally install MLX (GPU acceleration) and RIFE (high-quality frame interpolation). You'll also need FFmpeg installed via Homebrew for certain interpolation features. Once installed, run the script from the command line with your input video and output directory as arguments; use `--help` to see all available options.
